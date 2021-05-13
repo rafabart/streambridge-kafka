@@ -1,0 +1,16 @@
+spring:
+  cloud:
+    stream:
+      kafka:
+        binder:
+          brokers:
+            - localhost:9092
+        bindings:
+          customer-topic-binder:
+            destination: customer-topic
+            producer:
+              configuration:
+                key.serializer: 'org.apache.kafka.common.serialization.StringSerializer'
+          customer-topic-binder-bytes:
+            destination: customer-topic-bytes
+
