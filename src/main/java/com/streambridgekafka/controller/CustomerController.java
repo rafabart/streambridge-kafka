@@ -1,5 +1,6 @@
 package com.streambridgekafka.controller;
 
+import com.example.CustomerAvro;
 import com.streambridgekafka.domain.Customer;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -48,5 +49,25 @@ public class CustomerController {
 
         log.info("Message<Customer> = {}", message);
         return streamBridge.send("customer-topic-binder", message);
+    }
+
+
+    @PostMapping("/avro")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public Boolean sendAvro(@RequestBody final Customer customer) {
+
+        final CustomerAvro customerAvro = CustomerAvro.newBuilder()
+                .setId(customer.getId())
+                .setName(customer.getName())
+                .build();
+
+        final Message<CustomerAvro> message = MessageBuilder
+                .withPayload(customerAvro)
+                .setHeader(KafkaHeaders.MESSAGE_KEY, customerAvro.getId())
+                .build();
+
+
+        log.info("Message<CustomerAvro> = {}", message);
+        return streamBridge.send("customer-topic-binder-avro", message);
     }
 }

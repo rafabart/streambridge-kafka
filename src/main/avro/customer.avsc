@@ -1,0 +1,9 @@
+{
+     "type": "record",
+     "namespace": "com.example",
+     "name": "CustomerAvro",
+     "fields": [
+       { "name": "id", "type": "string", "doc": "Customer id" },
+       { "name": "name", "type": "string", "doc": "Name of Customer" }
+     ]
+}

@@ -2,15 +2,31 @@ spring:
   cloud:
     stream:
       kafka:
+
         binder:
+          producer-properties:
+            schema.registry.url: http://localhost:8085
           brokers:
             - localhost:9092
+
         bindings:
+
           customer-topic-binder:
             destination: customer-topic
             producer:
               configuration:
-                key.serializer: 'org.apache.kafka.common.serialization.StringSerializer'
+                key.serializer: org.apache.kafka.common.serialization.StringSerializer
+
           customer-topic-binder-bytes:
             destination: customer-topic-bytes
 
+          customer-topic-binder-avro:
+            destination: customer-topic-avro
+            contentType: application/*+avro
+            producer:
+              configuration:
+                key.serializer: org.apache.kafka.common.serialization.StringSerializer
+                value.serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+
+
+#spring.cloud.stream.bindings.input.useNativeDecoding=true

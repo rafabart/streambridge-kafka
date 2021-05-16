@@ -1,3 +1,12 @@
+buildscript {
+	repositories {
+		jcenter()
+	}
+	dependencies {
+		classpath "com.commercehub.gradle.plugin:gradle-avro-plugin:0.21.0"
+	}
+}
+
 plugins {
 	id 'org.springframework.boot' version '2.4.5'
 	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
@@ -16,13 +25,21 @@ configurations {
 
 repositories {
 	mavenCentral()
+	maven {
+		url "https://packages.confluent.io/maven/"
+	}
 }
+
+apply plugin: "com.commercehub.gradle.plugin.avro"
 
 ext {
 	set('springCloudVersion', "2020.0.2")
 }
 
 dependencies {
+	implementation 'org.apache.avro:avro:1.10.0'
+	implementation 'io.confluent:kafka-streams-avro-serde:6.0.0'
+
 	implementation 'org.springframework.boot:spring-boot-starter-webflux'
 	implementation 'org.apache.kafka:kafka-streams'
 	implementation 'org.springframework.cloud:spring-cloud-stream'
