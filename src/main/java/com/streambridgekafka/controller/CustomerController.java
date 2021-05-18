@@ -63,12 +63,14 @@ public class CustomerController {
 
         final Message<CustomerAvro> message = MessageBuilder
                 .withPayload(customerAvro)
-                .setHeader(KafkaHeaders.MESSAGE_KEY, customerAvro.getId())
+                .setHeader(KafkaHeaders.MESSAGE_KEY, customerAvro.getId().getBytes(StandardCharsets.UTF_8))
                 .build();
 
 
         log.info("Message<CustomerAvro> = {}", message);
-        return streamBridge.send("customer-topic-binder-avro", message);
+        var result = streamBridge.send("customer-topic-binder-avro", message);
+
+        return result;
     }
 
 
