@@ -70,4 +70,19 @@ public class CustomerController {
         log.info("Message<CustomerAvro> = {}", message);
         return streamBridge.send("customer-topic-binder-avro", message);
     }
+
+
+    @PostMapping("/amqp")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    public Boolean sendAmqp(@RequestBody final Customer customer) {
+
+        final Message<Customer> message = MessageBuilder
+                .withPayload(customer)
+                .setHeader(KafkaHeaders.MESSAGE_KEY, customer.getId())
+                .build();
+
+
+        log.info("Message<Customer> = {}", message);
+        return streamBridge.send("customer-topic-binder-amqp", message);
+    }
 }
