@@ -1,85 +1,71 @@
 spring:
-
-  rabbitmq:
-    host: localhost
-    port: 5672
-    username: guest
-    password: guest
-
   cloud:
     stream:
-      default-binder: kafka
 
-      rabbit:
-        bindings:
-          customer-topic-binder-amqp:
-            binder: rabbit
-            destination: customer-topic-binder-amqp
+      bindings:
+        customer-topic-binder-amqp:
+          binder: rabbit_amqp
+          destination: customer-topic-binder-amqp
 
-      kafka:
-        binder:
-          producer-properties:
-            schema.registry.url: http://localhost:8085
-          brokers:
-            - localhost:9092
+        customer-topic-binder:
+          binder: kafka_key_string
+          destination: customer-topic
 
-        bindings:
-          customer-topic-binder:
-            destination: customer-topic
-            producer:
-              configuration:
-                key.serializer: org.apache.kafka.common.serialization.StringSerializer
+        customer-topic-binder-bytes:
+          binder: kafka_key_bytes
+          destination: customer-topic-bytes
 
-          customer-topic-binder-bytes:
-            destination: customer-topic-bytes
-
-          customer-topic-binder-avro:
-            destination: customer-topic-avro
-            contentType: application/*+avro
-            producer:
-              configuration:
-                key.serializer: org.apache.kafka.common.serialization.StringSerializer
-                value.serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+        customer-topic-binder-avro:
+          binder: kafka_avro
+          destination: customer-topic-avro
+          contentType: application/*+avro
 
 
-#spring.cloud.stream.bindings.input.useNativeDecoding=true
+      binders:
+        kafka_key_string:
+          type: kafka
+          environment:
+            spring:
+              cloud:
+                stream:
+                  kafka:
+                    binder:
+                      #                      autoCreateTopics: true
+                      #                      autoAddPartitions: true
+                      producer-properties:
+                        key.serializer: org.apache.kafka.common.serialization.StringSerializer
+                      brokers: http://localhost:9092
 
+        kafka_key_bytes:
+          type: kafka
+          environment:
+            spring:
+              cloud:
+                stream:
+                  kafka:
+                    binder:
+                      brokers: http://localhost:9092
 
-#spring:
-#  cloud:
-#    stream:
-#      kafka:
-#        binder:
-#          brokers: http://localhost:9092
-#          auto-add-partitions: true
-#          producer-properties:
-#            schema.registry.url: http://localhost:8081
-#      schema-registry-client:
-#        endpoint: http://localhost:8081
-#
-#      bindings:
-#        output-customer:
-#          destination: employee-details
-#          content-type: application/*+avro
+        kafka_avro:
+          type: kafka
+          environment:
+            spring:
+              cloud:
+                stream:
+                  kafka:
+                    binder:
+                      producer-properties:
+                        key.serializer: org.apache.kafka.common.serialization.StringSerializer
+                        value.serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
+                        schema.registry.url: http://localhost:8081
+                      brokers: http://localhost:9092
 
-
-
-
-#        binders:
-#          producer:
-#            type: kafka
-#            environment:
-#              spring:
-#                cloud:
-#                  stream:
-#                    kafka:
-#                      binder:
-#                        autoCreateTopics: true
-#                        autoAddPartitions: true
-#                        producer-properties:
-#                          key.serializer: org.apache.kafka.common.serialization.StringSerializer
-#                          value.serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
-#                          schema.registry.url: http://localhost:8081
-#                        brokers: http://localhost:9092
-#                    schema-registry-client:
-#                      endpoint: http://localhost:8081
+        rabbit_amqp:
+          type: rabbit
+          environment:
+            spring:
+              rabbitmq:
+                host: localhost
+                port: 5672
+                username: guest
+                password: guest
