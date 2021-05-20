@@ -1,6 +1,9 @@
 spring:
   cloud:
     stream:
+      defaultBinder: kafka_key_bytes
+      function:
+        definition: receiveAmqp;
 
       bindings:
         customer-topic-binder-amqp:
@@ -20,6 +23,10 @@ spring:
           destination: customer-topic-avro
           contentType: application/*+avro
           useNativeEncoding: true
+
+        receiveAmqp-in-0:
+          binder: rabbit_amqp
+          destination: customer-topic-avro
 
 
       binders:
@@ -44,8 +51,9 @@ spring:
               cloud:
                 stream:
                   kafka:
-                    binder:
-                      brokers: http://localhost:9092
+                    default:
+                      binder:
+                        brokers: http://localhost:9092
 
         kafka_avro:
           type: kafka
