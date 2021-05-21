@@ -3,30 +3,44 @@ spring:
     stream:
       defaultBinder: kafka_key_bytes
       function:
-        definition: receiveAmqp;
+        definition: receiveAmqp;receiveKafka;receiveKafkaAvro;
 
       bindings:
-        customer-topic-binder-amqp:
+        customer-exchange-amqp:
           binder: rabbit_amqp
-          destination: customer-topic-binder-amqp
+          destination: customer-exchange-amqp
+          producer:
+            requiredGroups: customer-queue
 
-        customer-topic-binder:
+        customer-topic:
           binder: kafka_key_string
           destination: customer-topic
 
-        customer-topic-binder-bytes:
+        customer-topic-bytes:
           binder: kafka_key_bytes
           destination: customer-topic-bytes
 
-        customer-topic-binder-avro:
-          binder: kafka_avro
+        customer-topic-avro:
+          binder: kafka_avro_producer
           destination: customer-topic-avro
           contentType: application/*+avro
           useNativeEncoding: true
 
         receiveAmqp-in-0:
           binder: rabbit_amqp
+          destination: customer-exchange-amqp
+          consumer:
+            group: customer-queue
+
+        receiveKafka-in-0:
+          binder: kafka_key_string
+          destination: customer-topic
+
+        receiveKafkaAvro-in-0:
+          binder: kafka_avro_consumer
           destination: customer-topic-avro
+          contentType: application/*+avro
+          useNativeEncoding: true
 
 
       binders:
@@ -38,8 +52,6 @@ spring:
                 stream:
                   kafka:
                     binder:
-                      #                      autoCreateTopics: true
-                      #                      autoAddPartitions: true
                       producer-properties:
                         key.serializer: org.apache.kafka.common.serialization.StringSerializer
                       brokers: http://localhost:9092
@@ -55,20 +67,32 @@ spring:
                       binder:
                         brokers: http://localhost:9092
 
-        kafka_avro:
+        kafka_avro_producer:
           type: kafka
           environment:
             spring:
               cloud:
                 stream:
-                  schemaRegistryClient:
-                    endpoint: http://localhost:8085
                   kafka:
                     binder:
                       producer-properties:
                         #key.serializer: org.apache.kafka.common.serialization.StringSerializer
                         value.serializer: io.confluent.kafka.serializers.KafkaAvroSerializer
                         schema.registry.url: http://localhost:8085
+                      brokers: http://localhost:9092
+
+        kafka_avro_consumer:
+          type: kafka
+          environment:
+            spring:
+              cloud:
+                stream:
+                  kafka:
+                    binder:
+                      consumer-properties:
+                        value.deserializer: io.confluent.kafka.serializers.KafkaAvroDeserializer
+                        schema.registry.url: http://localhost:8085
+                        specific.avro.reader: true
                       brokers: http://localhost:9092
 
         rabbit_amqp:

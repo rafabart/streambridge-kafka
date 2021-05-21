@@ -59,22 +59,8 @@ services:
     ports:
       - 19000:9000
     environment:
+      SCHEMAREGISTRY_CONNECT: schemaregistry:8085
       KAFKA_BROKERCONNECT: kafka:29092
-
-  restproxy:
-    image: confluentinc/cp-kafka-rest:5.1.2
-    depends_on:
-      - kafka
-    environment:
-      KAFKA_REST_ZOOKEEPER_CONNECT: zookeeper:2181
-      KAFKA_REST_LISTENERS: http://0.0.0.0:8082
-      KAFKA_REST_SCHEMA_REGISTRY_URL: schemaregistry:8085
-      KAFKA_REST_HOST_NAME: restproxy
-      KAFKA_REST_DEBUG: "true"
-    ports:
-      - 8082:8082
-    networks:
-      - broker-kafka-rabbitmq
 
   rabbitmq:
     image: rabbitmq:3-management-alpine
@@ -83,6 +69,7 @@ services:
       - 15672:15672
     networks:
       - broker-kafka-rabbitmq
+
 
 networks:
   broker-kafka-rabbitmq:

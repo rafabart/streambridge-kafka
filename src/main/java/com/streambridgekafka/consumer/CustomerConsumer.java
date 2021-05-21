@@ -1,15 +1,15 @@
 package com.streambridgekafka.consumer;
 
+import com.example.CustomerAvro;
 import com.streambridgekafka.domain.Customer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.stereotype.Component;
 
 import java.util.function.Consumer;
 
 @Slf4j
-@Component
+@Configuration
 public class CustomerConsumer {
 
 
@@ -17,6 +17,23 @@ public class CustomerConsumer {
     public Consumer<Customer> receiveAmqp() {
         return customer -> {
             log.info("CustomerConsumer.receiveAmqp={}", customer);
+        };
+    }
+
+
+    @Bean
+    public Consumer<Customer> receiveKafka() {
+        return customer -> {
+            log.info("CustomerConsumer.receiveKafka={}", customer);
+        };
+    }
+
+
+    @Bean
+    public Consumer<CustomerAvro> receiveKafkaAvro() {
+        return customerAvro -> {
+            log.info("Received Type={}", customerAvro.getClass().getCanonicalName());
+            log.info("CustomerConsumer.receiveKafkaAvro={}", customerAvro);
         };
     }
 }

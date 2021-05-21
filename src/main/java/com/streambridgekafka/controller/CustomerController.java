@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.kafka.support.KafkaHeaders;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
+import org.springframework.util.MimeType;
 import org.springframework.web.bind.annotation.*;
 
 import java.nio.charset.StandardCharsets;
@@ -33,7 +34,7 @@ public class CustomerController {
 
 
         log.info("Message<Customer> = {}", message);
-        return streamBridge.send("customer-topic-binder-bytes", message);
+        return streamBridge.send("customer-topic-bytes", message);
     }
 
 
@@ -48,7 +49,7 @@ public class CustomerController {
 
 
         log.info("Message<Customer> = {}", message);
-        return streamBridge.send("customer-topic-binder", message);
+        return streamBridge.send("customer-topic", message);
     }
 
 
@@ -63,12 +64,12 @@ public class CustomerController {
 
         final Message<CustomerAvro> message = MessageBuilder
                 .withPayload(customerAvro)
-                .setHeader(KafkaHeaders.MESSAGE_KEY, customerAvro.getId().getBytes(StandardCharsets.UTF_8))
+                .setHeader(KafkaHeaders.MESSAGE_KEY, customer.getId().getBytes(StandardCharsets.UTF_8))
                 .build();
 
 
         log.info("Message<CustomerAvro> = {}", message);
-        var result = streamBridge.send("customer-topic-binder-avro", message);
+        var result = streamBridge.send("customer-topic-avro", message, MimeType.valueOf("application/+avro"));
 
         return result;
     }
@@ -85,6 +86,6 @@ public class CustomerController {
 
 
         log.info("Message<Customer> = {}", message);
-        return streamBridge.send("customer-topic-binder-amqp", message);
+        return streamBridge.send("customer-exchange-amqp", message);
     }
 }

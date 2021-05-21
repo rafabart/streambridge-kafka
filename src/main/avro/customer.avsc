@@ -2,6 +2,7 @@
      "type": "record",
      "namespace": "com.example",
      "name": "CustomerAvro",
+     "version": "1",
      "fields": [
        { "name": "id", "type": "string", "doc": "Customer id" },
        { "name": "name", "type": "string", "doc": "Name of Customer" }
