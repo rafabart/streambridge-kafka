@@ -1,7 +1,7 @@
 Projeto com objetivo de construir uma api que usa vários binders de integração assíncrona(Kafka e Rabbit) usando o StreamBridge.
 Usa algumas opções diferentes de configurar os arquivos yml dando um leque de opções de escolha.
 
-Usando:
+**Usando:**
 
 * JDK 11
 * Springboot 2.4.5
@@ -20,9 +20,18 @@ Usando:
 Subindo ambiente docker com o kafka, rabbit, kafdrop e Schema Registry UI:
 ```
   docker-compose up -d
- ```
+ ```   
+       
+ ### Acesso as ferramentas:
+    
+ Kafdrop UI: http://localhost:19000/
+    
+ Schema Registry UI: http://localhost:8000/
+     
+ Rabbit MQ Management: http://localhost:15672/
+    
 
-<p>Rest</p>
+### Rest:
 Usando o Postman para criar um novo customer e envia-los a bindings diversos:
 
 URL: http://localhost:8080/customers
