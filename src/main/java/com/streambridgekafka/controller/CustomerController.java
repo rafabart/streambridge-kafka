@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.nio.charset.StandardCharsets;
 
+import static org.springframework.http.HttpStatus.ACCEPTED;
+
 @Slf4j
 @RestController
 @RequestMapping("customers")
@@ -23,8 +25,12 @@ public class CustomerController {
     private final StreamBridge streamBridge;
 
 
+    /*
+    * A documentacao indica usar a message key da mensagem com serialização Bytes.
+    * .getBytes(StandardCharsets.UTF_8)
+    * */
     @PostMapping("/bytesKey")
-    @ResponseStatus(HttpStatus.ACCEPTED)
+    @ResponseStatus(ACCEPTED)
     public Boolean sendBytesKey(@RequestBody final Customer customer) {
 
         final Message<Customer> message = MessageBuilder
@@ -34,12 +40,15 @@ public class CustomerController {
 
 
         log.info("Message<Customer> = {}", message);
-        return streamBridge.send("customer-topic-bytes", message);
+        return streamBridge.send("producer-customer-topic-bytes", message);
     }
 
 
+    /*
+    * Message key serializada como String
+    * */
     @PostMapping("/stringKey")
-    @ResponseStatus(HttpStatus.ACCEPTED)
+    @ResponseStatus(ACCEPTED)
     public Boolean sendStringKey(@RequestBody final Customer customer) {
 
         final Message<Customer> message = MessageBuilder
@@ -49,14 +58,18 @@ public class CustomerController {
 
 
         log.info("Message<Customer> = {}", message);
-        return streamBridge.send("customer-topic", message);
+        return streamBridge.send("producer-customer-topic", message);
     }
 
 
+    /*
+     * Usando padrão Avro na serialização da mensagem
+     * */
     @PostMapping("/avro")
-    @ResponseStatus(HttpStatus.ACCEPTED)
+    @ResponseStatus(ACCEPTED)
     public Boolean sendAvro(@RequestBody final Customer customer) {
 
+        //Objeto avro gerado a partir do schema na pasta 'avro'
         final CustomerAvro customerAvro = CustomerAvro.newBuilder()
                 .setId(customer.getId())
                 .setName(customer.getName())
@@ -69,14 +82,15 @@ public class CustomerController {
 
 
         log.info("Message<CustomerAvro> = {}", message);
-        var result = streamBridge.send("customer-topic-avro", message, MimeType.valueOf("application/+avro"));
-
-        return result;
+        return streamBridge.send("producer-customer-topic-avro", message, MimeType.valueOf("application/+avro"));
     }
 
 
+    /*
+     * Usando RabbitMQ
+     * */
     @PostMapping("/amqp")
-    @ResponseStatus(HttpStatus.ACCEPTED)
+    @ResponseStatus(ACCEPTED)
     public Boolean sendAmqp(@RequestBody final Customer customer) {
 
         final Message<Customer> message = MessageBuilder
@@ -86,6 +100,6 @@ public class CustomerController {
 
 
         log.info("Message<Customer> = {}", message);
-        return streamBridge.send("customer-exchange-amqp", message);
+        return streamBridge.send("producer-customer-exchange-amqp", message);
     }
 }

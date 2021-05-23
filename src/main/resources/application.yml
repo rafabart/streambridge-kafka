@@ -1,26 +1,33 @@
 spring:
   cloud:
     stream:
+
+      # No caso de multiplos binders é preciso definir um como o padrão usado pela api.
       defaultBinder: kafka_key_bytes
+      # É preciso definir as funções no caso de consumo automático na propriedade 'definition'.
+      # Sem isso o consumidores não consomem as mesangens.
       function:
         definition: receiveAmqp;receiveKafka;receiveKafkaAvro;
 
+# bindings são os tópicos e filas de destino ou consumo.
+# É possível configurar algumas propriedades dos bindings de forma independete.
+#Obs: Não é possível configurar a serialização/deserialização nos bindings, só no binders.
       bindings:
-        customer-exchange-amqp:
+        producer-customer-exchange-amqp:
           binder: rabbit_amqp
           destination: customer-exchange-amqp
           producer:
             requiredGroups: customer-queue
 
-        customer-topic:
+        producer-customer-topic:
           binder: kafka_key_string
           destination: customer-topic
 
-        customer-topic-bytes:
+        producer-customer-topic-bytes:
           binder: kafka_key_bytes
           destination: customer-topic-bytes
 
-        customer-topic-avro:
+        producer-customer-topic-avro:
           binder: kafka_avro_producer
           destination: customer-topic-avro
           contentType: application/*+avro
@@ -42,7 +49,8 @@ spring:
           contentType: application/*+avro
           useNativeEncoding: true
 
-
+# Bindes são as opçoes de ferramentas de envio de mensagens/streams. Ex: Kafka e RabbitMQ.
+# É possível personalizar as configurações de cada binder de forma independente.
       binders:
         kafka_key_string:
           type: kafka
