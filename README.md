@@ -27,24 +27,29 @@ Usando o Postman para criar um novo customer e envia-los a bindings diversos:
 
 URL: http://localhost:8080/customers
 
-<p>URI: /bytesKey</p>
+URI: /bytesKey   
 Verbo: POST
+   
 ```
 {
     "id":"1",
     "name":"Michael Jordan"
 }
 ```
-
-<p>URI: /stringKey</p>
+   
+URI: /stringKey   
 Verbo: POST
+   
 ```
 {
     "id":"2",
     "name":"Michael Jordan"
 }
-<p>URI: /avro</p>
+```
+   
+URI: /avro   
 Verbo: POST
+   
 ```
 {
     "id":"3",
@@ -52,10 +57,12 @@ Verbo: POST
 }
 ```
 
-<p>URI: /amqp</p>
+URI: /amqp   
 Verbo: POST
+   
 ```
 {
     "id":"4",
     "name":"Michael Jordan"
 }
+```
