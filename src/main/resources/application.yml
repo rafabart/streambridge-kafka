@@ -2,8 +2,21 @@ spring:
   cloud:
     stream:
 
+# As configurações de DLQ devem ser feitas diretamente no stream.rabbit para o consumidor de mesmo nome
+# no stream.bindings
+      rabbit:
+        bindings:
+          receiveAmqp-in-0:
+            consumer:
+              #habilita a DLQ para essa fila
+#              republishToDlq: true
+              autoBindDlq: true
+              deadLetterQueueName: customer-exchange-amqp.customer-queue.retry
+              deadLetterExchange: customer-exchange-amqp
+              deadLetterRoutingKey: customer-exchange-amqp.customer-queue.retry
+
       # No caso de multiplos binders é preciso definir um como o padrão usado pela api.
-      defaultBinder: kafka_key_bytes
+      defaultBinder: rabbit_amqp
       # É preciso definir as funções no caso de consumo automático na propriedade 'definition'.
       # Sem isso o consumidores não consomem as mesangens.
       function:
@@ -36,8 +49,11 @@ spring:
         receiveAmqp-in-0:
           binder: rabbit_amqp
           destination: customer-exchange-amqp
+          group: customer-queue
           consumer:
-            group: customer-queue
+            #disable binder retries
+            max-attempts: 1
+            requeueRejected: true
 
         receiveKafka-in-0:
           binder: kafka_key_string

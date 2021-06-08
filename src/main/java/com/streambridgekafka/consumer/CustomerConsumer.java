@@ -17,6 +17,7 @@ public class CustomerConsumer {
     public Consumer<Customer> receiveAmqp() {
         return customer -> {
             log.info("CustomerConsumer.receiveAmqp={}", customer);
+            if (customer.getId().equals("dlq")) throw new RuntimeException("DLQ Simulation");
         };
     }
 
